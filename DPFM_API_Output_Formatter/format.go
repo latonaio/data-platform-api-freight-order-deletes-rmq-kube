@@ -29,29 +29,3 @@ func ConvertToHeader(rows *sql.Rows) (*Header, error) {
 
 	return &header, nil
 }
-
-func ConvertToItem(rows *sql.Rows) (*Item, error) {
-	defer rows.Close()
-	item := Item{}
-	i := 0
-
-	for rows.Next() {
-		i++
-		err := rows.Scan(
-			&item.FreightOrder,
-			&item.FreightOrderItem,
-			&item.IsMarkedForDeletion,
-		)
-		if err != nil {
-			fmt.Printf("err = %+v \n", err)
-			return &item, err
-		}
-
-	}
-	if i == 0 {
-		fmt.Printf("DBに対象のレコードが存在しません。")
-		return &item, nil
-	}
-
-	return &item, nil
-}

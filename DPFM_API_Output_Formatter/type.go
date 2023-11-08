@@ -26,7 +26,6 @@ type SDC struct {
 
 type Message struct {
 	Header *Header `json:"Header"`
-	Item   *[]Item `json:"Item"`
 }
 
 type Header struct {

@@ -51,28 +51,19 @@ func (c *DPFMAPICaller) deleteSqlProcess(
 	log *logger.Logger,
 ) *dpfm_api_output_formatter.Message {
 	var headerData *dpfm_api_output_formatter.Header
-	itemData := make([]dpfm_api_output_formatter.Item, 0)
 	for _, a := range accepter {
 		switch a {
 		case "Header":
-			h, i := c.headerDelete(input, output, log)
+			h:= c.headerDelete(input, output, log)
 			headerData = h
-			if h == nil || i == nil {
+			if h == nil {
 				continue
 			}
-			itemData = append(itemData, *i...)
-		case "Item":
-			i := c.itemDelete(input, output, log)
-			if i == nil {
-				continue
-			}
-			itemData = append(itemData, *i...)
 		}
 	}
 
 	return &dpfm_api_output_formatter.Message{
 		Header: headerData,
-		Item:   &itemData,
 	}
 }
 
@@ -82,7 +73,7 @@ func (c *DPFMAPICaller) headerDelete(
 	log *logger.Logger,
 ) *dpfm_api_output_formatter.Header {
 	sessionID := input.RuntimeSessionID
-	header := c.HeaderRead(input, log)
+	header := c.headerRead(input, log)
 	header.FreightOrder = input.Header.FreightOrder
 	header.IsMarkedForDeletion = input.Header.IsMarkedForDeletion
 	res, err := c.rmq.SessionKeepRequest(nil, c.conf.RMQ.QueueToSQL()[0], map[string]interface{}{"message": header, "function": "FreightOrderHeader", "runtime_session_id": sessionID})
